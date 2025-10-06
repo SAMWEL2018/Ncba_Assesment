@@ -26,7 +26,7 @@ public class AccountsController {
     public AccountsController(AccountService accountService) {
         this.accountService = accountService;
     }
-    @PostMapping("/deposit")
+    @PostMapping("/fund")
     public ResponseEntity<DepositResponse> deposit(@RequestBody DepositRequest request) {
         DepositResponse response = accountService.deposit(request);
         return ResponseEntity.ok(response);
