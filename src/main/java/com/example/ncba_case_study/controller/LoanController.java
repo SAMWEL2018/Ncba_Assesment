@@ -22,8 +22,7 @@ public class LoanController {
     public LoanController(LoanService loanService) {
         this.loanService = loanService;
     }
-
-
+    /*Loan Endpoint */
     @PostMapping("/apply")
     public ResponseEntity<LoanScheduleResponse> applyForLoan(@RequestBody LoanApplicationRequest request) {
         LoanScheduleResponse response = loanService.applyForLoan(request);

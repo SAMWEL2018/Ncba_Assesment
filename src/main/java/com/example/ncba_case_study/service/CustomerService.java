@@ -40,7 +40,7 @@ public class CustomerService {
         this.emailService = emailService;
     }
 
-    public void registerCustomer(CustomerRegisterRequest request) {
+    public String registerCustomer(CustomerRegisterRequest request) {
         // Optionally check for existing email
         customerRepository.findByEmail(request.getEmail()).ifPresent(c -> {
             throw new IllegalStateException("Email already registered");
@@ -68,9 +68,10 @@ public class CustomerService {
         String verificationLink = "https://ncba.com/verify?accountId=" + saved.getAccountId();
         //emailService.sendVerificationEmail(saved.getEmail(), emailContent);
         emailService.sendVerificationEmail(saved.getEmail(), verificationLink + " " + emailContent);
+        return  emailContent;
     }
 
-    public void createAccountForCustomer(Customer customer) {
+    public Account createAccountForCustomer(Customer customer) {
         Account account = Account.builder()
                 .accountId(customer.getAccountId())
                 .customer(customer)
@@ -78,13 +79,14 @@ public class CustomerService {
                 .loanEligible(false)
                 .build();
         accountRepository.save(account);
+        return account;
     }
 
     private String generateVerificationCode() {
         return String.valueOf(new Random().nextInt(900000) + 100000); // 6-digit code
     }
 
-    public void verifyCustomer(String email, String code) {
+    public Account verifyCustomer(String email, String code) {
         VerificationCode verification = codeRepository.findByEmailAndCode(email, code)
                 .orElseThrow(() -> new IllegalStateException("Invalid or expired verification code."));
 
@@ -97,7 +99,8 @@ public class CustomerService {
 
         customer.setStatus(Customer.Status.VERIFIED);
         customerRepository.save(customer);
-        createAccountForCustomer(customer);
+        Account account= createAccountForCustomer(customer);
         codeRepository.delete(verification);
+        return account;
     }
 }

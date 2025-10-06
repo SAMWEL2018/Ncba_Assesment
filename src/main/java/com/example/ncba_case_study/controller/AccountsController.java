@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class AccountsController {
 
     private final AccountService accountService;
+   /*
+   Deposit Endpoint
+   * */
 
     public AccountsController(AccountService accountService) {
         this.accountService = accountService;
