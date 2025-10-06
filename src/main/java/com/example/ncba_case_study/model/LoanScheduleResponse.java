@@ -1,5 +1,6 @@
 package com.example.ncba_case_study.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -14,9 +15,12 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoanScheduleResponse {
+    private String responseCode;
+    private String responseMessage;
     private BigDecimal loanAmount;
-    private int tenure;
+    private Integer tenure;
     private BigDecimal monthlyInstallment;
     private BigDecimal totalRepayable;
     private BigDecimal interestRate;

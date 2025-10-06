@@ -20,7 +20,7 @@ public class CoreBankingService {
         BigDecimal totalRepayable = loanAmount.add(interest);
         BigDecimal monthlyInstallment = totalRepayable.divide(BigDecimal.valueOf(tenure), 2, RoundingMode.HALF_UP);
 
-        return new LoanScheduleResponse(
+        return new LoanScheduleResponse("200","success",
                 loanAmount,
                 tenure,
                 monthlyInstallment,

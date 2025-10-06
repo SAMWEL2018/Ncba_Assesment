@@ -29,14 +29,15 @@ public class LoanService {
                 .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
         if (account.getBalance().compareTo(BigDecimal.valueOf(500)) < 0) {
-            throw new IllegalStateException("Account balance must be at least KES 500 to apply for a loan.");
+            //throw new IllegalStateException("Account balance must be at least KES 500 to apply for a loan.");
+            return LoanScheduleResponse.builder().responseCode("200").responseMessage("Account balance must be at least KES 500 to apply for a loan.").build();
         }
 
         BigDecimal amount = request.getLoanAmount();
 
         if (amount.compareTo(BigDecimal.valueOf(1000)) < 0 ||
                 amount.compareTo(BigDecimal.valueOf(10000)) > 0) {
-            throw new IllegalArgumentException("Loan amount must be between KES 1,000 and 10,000.");
+            return LoanScheduleResponse.builder().responseCode("200").responseMessage("Loan amount must be between KES 1,000 and 10,000.").build();
         }
 
         return coreBankingService.generateLoanSchedule(amount, request.getTenure());
