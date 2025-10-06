@@ -1,9 +1,6 @@
 package com.example.ncba_case_study.service;
 
-import com.example.ncba_case_study.model.Account;
-import com.example.ncba_case_study.model.Customer;
-import com.example.ncba_case_study.model.CustomerRegisterRequest;
-import com.example.ncba_case_study.model.VerificationCode;
+import com.example.ncba_case_study.model.*;
 import com.example.ncba_case_study.repository.AccountRepository;
 import com.example.ncba_case_study.repository.CustomerRepository;
 import com.example.ncba_case_study.repository.VerificationCodeRepository;
@@ -40,10 +37,12 @@ public class CustomerService {
         this.emailService = emailService;
     }
 
-    public String registerCustomer(CustomerRegisterRequest request) {
+    public CustomResponse registerCustomer(CustomerRegisterRequest request) {
         // Optionally check for existing email
+        CustomResponse response = CustomResponse.builder().build();
         customerRepository.findByEmail(request.getEmail()).ifPresent(c -> {
-            throw new IllegalStateException("Email already registered");
+            response.setResponseCode("200");
+            response.setResponseMessage("Email already registered");
         });
 
         Customer customer = Customer.builder()
@@ -68,7 +67,10 @@ public class CustomerService {
         String verificationLink = "https://ncba.com/verify?accountId=" + saved.getAccountId();
         //emailService.sendVerificationEmail(saved.getEmail(), emailContent);
         emailService.sendVerificationEmail(saved.getEmail(), verificationLink + " " + emailContent);
-        return  emailContent;
+        response.setResponseCode("200");
+        response.setResponseMessage("success");
+        response.setData(emailContent);
+        return  response;
     }
 
     public Account createAccountForCustomer(Customer customer) {

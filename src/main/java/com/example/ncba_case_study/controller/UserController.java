@@ -1,6 +1,7 @@
 package com.example.ncba_case_study.controller;
 
 import com.example.ncba_case_study.model.Account;
+import com.example.ncba_case_study.model.CustomResponse;
 import com.example.ncba_case_study.model.CustomerRegisterRequest;
 import com.example.ncba_case_study.model.VerifyRequest;
 import com.example.ncba_case_study.service.CustomerService;
@@ -32,13 +33,13 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody CustomerRegisterRequest request) {
-        String res=customerService.registerCustomer(request);
+        CustomResponse res = customerService.registerCustomer(request);
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("/verify")
     public ResponseEntity<?> verify(@RequestBody VerifyRequest request) {
-        Account account= customerService.verifyCustomer(request.getEmail(), request.getCode());
+        Account account = customerService.verifyCustomer(request.getEmail(), request.getCode());
         account.setCustomer(null);
         return ResponseEntity.ok(account);
     }
