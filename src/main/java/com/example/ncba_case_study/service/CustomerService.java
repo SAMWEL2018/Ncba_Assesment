@@ -106,15 +106,22 @@ public class CustomerService {
         }
 
         if (verification.get().getExpiresAt().isBefore(LocalDateTime.now())) {
-            throw new IllegalStateException("Verification code has expired.");
+            return CustomResponse.builder()
+                    .responseCode("400")
+                    .responseMessage("Verification code has expired.")
+                    .build();
         }
 
-        Customer customer = customerRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("Customer not found."));
-
-        customer.setStatus(Customer.Status.VERIFIED);
-        customerRepository.save(customer);
-        Account account = createAccountForCustomer(customer);
+        Optional<Customer> customer = customerRepository.findByEmail(email);
+        if (customer.isEmpty()) {
+            return CustomResponse.builder()
+                    .responseCode("400")
+                    .responseMessage("Customer not found.")
+                    .build();
+        }
+        customer.get().setStatus(Customer.Status.VERIFIED);
+        customerRepository.save(customer.get());
+        Account account = createAccountForCustomer(customer.get());
         account.setCustomer(null);
         codeRepository.delete(verification.get());
 
