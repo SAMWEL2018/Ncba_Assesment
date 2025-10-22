@@ -1,7 +1,6 @@
 package com.example.ncba_case_study.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * @author samwel.wafula
@@ -10,6 +9,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class VerifyRequest {
     private String email;
     private String code;

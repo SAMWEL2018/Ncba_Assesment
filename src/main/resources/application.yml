@@ -15,3 +15,24 @@ spring:
   sql:
     init:
       continue-on-error: true
+
+app:
+  name: ncba_case_study
+  version: 1.0.0
+
+logging:
+  pattern:
+    dateformat: 'yyyy-MM-dd HH:mm:ss.SSS XXX'
+    console: '%d{yyyy-MM-dd HH:mm:ss.SSS} | ${app.name} | ${app.version} | %-20.20thread | %5p | %-25.25logger{25} : %m%n'
+    file: '%d{yyyy-MM-dd HH:mm:ss.SSS} | ${app.name} | ${app.version} | %-20.20thread | %5p | %-25.25logger{25} : %m%n'
+  level:
+    root: INFO
+    com:
+      sla.sla.terrapay: DEBUG
+  file:
+    name: ${LOG_PATH:/home/datadrive/logs/NCBA_CASE_STUDY/}${LOGFILE:today.log}
+  logback:
+    rollingpolicy:
+      file-name-pattern: ${LOG_PATH:/home/datadrive/logs/NCBA_CASE_STUDY/}%d{ddMMyyyy}.%i.log
+      max-history: 60
+      max-file-size: 800MB

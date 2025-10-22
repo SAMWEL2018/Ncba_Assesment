@@ -8,10 +8,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Random;
 
 /**
@@ -28,27 +30,33 @@ public class CustomerService {
     private final AccountRepository accountRepository;
     private final VerificationCodeRepository codeRepository;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, AccountRepository accountRepository, VerificationCodeRepository codeRepository, EmailService emailService) {
+    public CustomerService(CustomerRepository customerRepository, AccountRepository accountRepository, VerificationCodeRepository codeRepository, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.customerRepository = customerRepository;
         this.accountRepository = accountRepository;
         this.codeRepository = codeRepository;
         this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public CustomResponse registerCustomer(CustomerRegisterRequest request) {
         // Optionally check for existing email
         CustomResponse response = CustomResponse.builder().build();
-        customerRepository.findByEmail(request.getEmail()).ifPresent(c -> {
-            response.setResponseCode("200");
-            response.setResponseMessage("Email already registered");
-        });
+        Optional<Customer> existingCustomer = customerRepository.findByEmail(request.getEmail());
+
+        if (existingCustomer.isPresent()) {
+            return CustomResponse.builder()
+                    .responseCode("200")
+                    .responseMessage("Email already registered")
+                    .build();
+        }
 
         Customer customer = Customer.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .status(Customer.Status.PENDING_VERIFICATION)
                 .build();
 
@@ -70,7 +78,7 @@ public class CustomerService {
         response.setResponseCode("200");
         response.setResponseMessage("success");
         response.setData(emailContent);
-        return  response;
+        return response;
     }
 
     public Account createAccountForCustomer(Customer customer) {
@@ -101,7 +109,7 @@ public class CustomerService {
 
         customer.setStatus(Customer.Status.VERIFIED);
         customerRepository.save(customer);
-        Account account= createAccountForCustomer(customer);
+        Account account = createAccountForCustomer(customer);
         codeRepository.delete(verification);
         return account;
     }

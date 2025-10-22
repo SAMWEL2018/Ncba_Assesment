@@ -14,7 +14,7 @@ import java.math.RoundingMode;
 @Service
 public class CoreBankingService {
     public LoanScheduleResponse generateLoanSchedule(BigDecimal loanAmount, int tenure) {
-        BigDecimal interestRate = new BigDecimal("0.10"); // 10% flat for simplicity
+        BigDecimal interestRate = new BigDecimal("0.10");
 
         BigDecimal interest = loanAmount.multiply(interestRate);
         BigDecimal totalRepayable = loanAmount.add(interest);

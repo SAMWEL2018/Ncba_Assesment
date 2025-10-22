@@ -1,20 +1,20 @@
+FROM maven:3.9.4-eclipse-temurin-21 AS builder
 
-FROM eclipse-temurin:17-jdk-alpine as builder
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+WORKDIR /build
 
-WORKDIR /app
-
-COPY .mvn/ .mvn
-COPY mvnw pom.xml ./
-RUN ./mvnw dependency:go-offline
+COPY pom.xml .
 COPY src ./src
-RUN ./mvnw clean package -DskipTests
-FROM eclipse-temurin:17-jre-alpine
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-WORKDIR /app
-COPY --from=builder /app/target/*.jar app.jar
-USER appuser
-EXPOSE 8094
+RUN mvn clean package -DskipTests
+FROM eclipse-temurin:21-jre
 
-# Run the application
+# Environment variables
+ENV APP_PORT=8094 \
+    DB_HOST=localhost \
+    DB_PORT=5432 \
+    DB_NAME=ncba \
+    SPRING_OUTPUT_ANSI_ENABLED=ALWAYS
+WORKDIR /app
+COPY --from=builder /build/target/NCBA_CASE_STUDY-1.0.1.jar app.jar
+EXPOSE ${APP_PORT}
 ENTRYPOINT ["java", "-jar", "app.jar"]
+CMD ["--server.port=${APP_PORT}", "--spring.datasource.url=jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}"]
