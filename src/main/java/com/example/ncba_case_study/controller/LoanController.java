@@ -1,5 +1,6 @@
 package com.example.ncba_case_study.controller;
 
+import com.example.ncba_case_study.model.CustomResponse;
 import com.example.ncba_case_study.model.LoanApplicationRequest;
 import com.example.ncba_case_study.model.LoanScheduleResponse;
 import com.example.ncba_case_study.service.LoanService;
@@ -24,8 +25,8 @@ public class LoanController {
     }
     /*Loan Endpoint */
     @PostMapping("/apply")
-    public ResponseEntity<LoanScheduleResponse> applyForLoan(@RequestBody LoanApplicationRequest request) {
-        LoanScheduleResponse response = loanService.applyForLoan(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<CustomResponse> applyForLoan(@RequestBody LoanApplicationRequest request) {
+        CustomResponse response = loanService.applyForLoan(request);
+        return ResponseEntity.status(Integer.parseInt(response.getResponseCode())).body(response);
     }
 }

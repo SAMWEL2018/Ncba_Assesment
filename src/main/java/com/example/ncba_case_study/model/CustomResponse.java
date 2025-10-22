@@ -19,4 +19,5 @@ public class CustomResponse {
     public String responseMessage;
     private String data;
     private Account account;
+    private LoanScheduleResponse loanScheduleResponse;
 }

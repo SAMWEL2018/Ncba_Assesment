@@ -17,8 +17,6 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LoanScheduleResponse {
-    private String responseCode;
-    private String responseMessage;
     private BigDecimal loanAmount;
     private Integer tenure;
     private BigDecimal monthlyInstallment;
