@@ -39,9 +39,8 @@ public class UserController {
 
     @PostMapping("/verify")
     public ResponseEntity<?> verify(@RequestBody VerifyRequest request) {
-        Account account = customerService.verifyCustomer(request.getEmail(), request.getCode());
-        account.setCustomer(null);
-        return ResponseEntity.ok(account);
+        CustomResponse response = customerService.verifyCustomer(request.getEmail(), request.getCode());
+        return ResponseEntity.status(Integer.parseInt(response.getResponseCode())).body(response);
     }
 
 }

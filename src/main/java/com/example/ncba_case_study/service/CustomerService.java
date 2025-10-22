@@ -96,11 +96,16 @@ public class CustomerService {
         return String.valueOf(new Random().nextInt(900000) + 100000); // 6-digit code
     }
 
-    public Account verifyCustomer(String email, String code) {
-        VerificationCode verification = codeRepository.findByEmailAndCode(email, code)
-                .orElseThrow(() -> new IllegalStateException("Invalid or expired verification code."));
+    public CustomResponse verifyCustomer(String email, String code) {
+        Optional<VerificationCode> verification = codeRepository.findByEmailAndCode(email, code);
+        if (verification.isEmpty()) {
+            return CustomResponse.builder()
+                    .responseCode("400")
+                    .responseMessage("Invalid or expired verification code.")
+                    .build();
+        }
 
-        if (verification.getExpiresAt().isBefore(LocalDateTime.now())) {
+        if (verification.get().getExpiresAt().isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("Verification code has expired.");
         }
 
@@ -110,7 +115,13 @@ public class CustomerService {
         customer.setStatus(Customer.Status.VERIFIED);
         customerRepository.save(customer);
         Account account = createAccountForCustomer(customer);
-        codeRepository.delete(verification);
-        return account;
+        account.setCustomer(null);
+        codeRepository.delete(verification.get());
+
+        return CustomResponse.builder()
+                .responseCode("200")
+                .responseMessage("account created")
+                .account(account)
+                .build();
     }
 }

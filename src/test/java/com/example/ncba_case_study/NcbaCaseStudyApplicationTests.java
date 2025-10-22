@@ -40,8 +40,8 @@ class NcbaCaseStudyApplicationTests {
                 .code("389106")
                 .build();
         try {
-            Account account= customerService.verifyCustomer(request.getEmail(), request.getCode());
-            log.info("Account response {}",new ObjectMapper().writeValueAsString(account));
+            CustomResponse response= customerService.verifyCustomer(request.getEmail(), request.getCode());
+            log.info("Account response {}",new ObjectMapper().writeValueAsString(response));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

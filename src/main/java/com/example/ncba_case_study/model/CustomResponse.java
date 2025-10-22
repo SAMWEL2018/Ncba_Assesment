@@ -18,4 +18,5 @@ public class CustomResponse {
     private String responseCode;
     public String responseMessage;
     private String data;
+    private Account account;
 }
